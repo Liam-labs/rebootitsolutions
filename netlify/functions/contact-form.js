@@ -150,7 +150,7 @@ exports.handler = async (event) => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: `Reboot IT Website <${fromAddress}>`,
+          from: fromAddress.includes('<') ? fromAddress : `Reboot IT Website <${fromAddress}>`,
           to: [process.env.CONTACT_TO_EMAIL || 'info@rebootitsolutions.co.uk'],
           reply_to: formData.email,
           subject: `New website enquiry from ${formData.name}`,
