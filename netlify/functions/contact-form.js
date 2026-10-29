@@ -139,7 +139,7 @@ exports.handler = async (event) => {
     if (!apiKey || !fromAddress) {
       console.error('Contact form not configured: RESEND_API_KEY and CONTACT_FROM_EMAIL must be set');
       logEnquiry();
-      return respond(502, { success: false, error: FALLBACK_ERROR });
+      return respond(502, { success: false, error: FALLBACK_ERROR, reason: 'not_configured' });
     }
 
     try {
@@ -164,12 +164,12 @@ exports.handler = async (event) => {
         try { detail = await sendResponse.text(); } catch (_) { /* ignore */ }
         console.error('Resend email failed. Status:', sendResponse.status, detail);
         logEnquiry();
-        return respond(502, { success: false, error: FALLBACK_ERROR });
+        return respond(502, { success: false, error: FALLBACK_ERROR, reason: 'resend_' + sendResponse.status });
       }
     } catch (sendError) {
       console.error('Resend email request error:', sendError && sendError.message);
       logEnquiry();
-      return respond(502, { success: false, error: FALLBACK_ERROR });
+      return respond(502, { success: false, error: FALLBACK_ERROR, reason: 'send_request_error' });
     }
 
     return respond(200, { success: true, message: 'Form submitted successfully' });
